@@ -219,8 +219,17 @@
       for (var i = 0; i < bullets.children.length; i++) {
 
         bullets.children[i].position.x += bulletSpeed;
-        //console.log(bullets.children[i].position);
+
+        // check if bullets still in bounds
+        var dist = Math.sqrt((bullets.children[i].position.x-camera.position.x)^2 + 
+                             (bullets.children[i].position.y-camera.position.y)^2 + 
+                             (bullets.children[i].position.z-camera.position.z)^2);
+        //if (dist > bulletMaxDist) TODO growing real slow
+          //console.log("hi");
+        console.log(dist);
       }
+
+      //console.log(bullets.children.length);
 
       requestAnimationFrame(animate);
 
