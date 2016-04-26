@@ -31,6 +31,12 @@
     var effect, controls;
     var element, container;
 
+    var orbs = new THREE.Object3D();
+    var activeOrbCount = 1000;
+    var orbSize = 10;
+    var maxOrbStartDist = 1000;
+    var minOrbStartDist = orbSize*4;
+
     var clock = new THREE.Clock();
 
     init();
@@ -101,8 +107,36 @@
       mesh.rotation.x = -Math.PI / 2;
       scene.add(mesh);
 
+      // setup initial target orbs
+      initializeOrbs();
+
       window.addEventListener('resize', resize, false);
       setTimeout(resize, 1);
+    }
+
+    function initializeOrbs() {
+
+      var orbTexture = THREE.ImageUtils.loadTexture('textures/objects/orb.png'),
+        spriteMaterial = new THREE.SpriteMaterial({
+          map: orbTexture,
+          color: 0xffffff
+        });
+
+      for (var i = 0; i < activeOrbCount; i++) {
+
+          var sprite = new THREE.Sprite(spriteMaterial);
+
+          sprite.scale.set(orbSize, orbSize, orbSize);
+          sprite.position.set((2*maxOrbStartDist * Math.random()) - maxOrbStartDist + minOrbStartDist, 
+            maxOrbStartDist * Math.random() + minOrbStartDist,
+            (2*maxOrbStartDist * Math.random()) - maxOrbStartDist + minOrbStartDist);
+
+          sprite.material.blending = THREE.AdditiveBlending;
+
+          orbs.add(sprite);
+      }
+
+      scene.add(orbs);
     }
 
     function resize() {
