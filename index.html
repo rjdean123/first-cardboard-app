@@ -34,7 +34,7 @@
   <body>
   <div id="example"></div>
 
-  <div id="HUDlives"><b>LIVES:</b> 3</div>
+  <div id="HUDlives"><b>LIVES:</b> 3 </div>
   <br/>
   <div id="HUDscore"><b>SCORE:</b> 0</div>
 
@@ -52,8 +52,8 @@
     var orbs = new THREE.Object3D();
     var startingOrbCount = 1;
     var orbSize = 50;
-    var maxOrbStartDist = 700;
-    var minOrbStartDist = 600;
+    var maxOrbStartDist = 400;
+    var minOrbStartDist = 300;
     var orbSpeed = 1;
     var orbFreq = 1000;
 
@@ -263,7 +263,20 @@
 
       }
 
-      // check for bullet - 
+      // check for bullet - orb collisions
+      for (var i = 0; i < orbs.children.length; i++) {
+        for (var j = 0; j < bullets.children.length; j++) {
+
+          var dist = orbs.children[i].position.clone().sub(bullets.children[j].position);
+
+          // bullseye
+          if (dist.length() < (orbSize + bulletSize)) {
+            orbs.children.splice(i, 1);
+            bullets.children.splice(j, 1);
+            bulletDirection.splice(j, 1);
+          }
+        }
+      }
 
       requestAnimationFrame(animate);
 
@@ -276,7 +289,7 @@
       // add new orb if appropriate
       if (frame % (orbFreq) == 0) {
 
-        console.log(frame);
+        orbFreq -= 20;
 
         var orbTexture = THREE.ImageUtils.loadTexture('textures/objects/orb.png'),
         spriteMaterial = new THREE.SpriteMaterial({
@@ -287,9 +300,18 @@
         var sprite = new THREE.Sprite(spriteMaterial);
 
         sprite.scale.set(orbSize, orbSize, orbSize);
-        sprite.position.set((2*maxOrbStartDist * Math.random()) - maxOrbStartDist + minOrbStartDist, 
-                              maxOrbStartDist * Math.random() + minOrbStartDist,
-                            (2*maxOrbStartDist * Math.random()) - maxOrbStartDist + minOrbStartDist);
+        sprite.position.set((2*maxOrbStartDist * Math.random()) - maxOrbStartDist, 
+                              (maxOrbStartDist+200) * Math.random(),
+                            (2*maxOrbStartDist * Math.random()) - maxOrbStartDist);
+
+        if (sprite.position.x < 0)
+          sprite.position.x -= minOrbStartDist;
+        if (sprite.position.z < 0)
+          sprite.position.z -= minOrbStartDist;
+        if (sprite.position.x > 0)
+          sprite.position.x += minOrbStartDist;
+        if (sprite.position.z > 0)
+          sprite.position.z += minOrbStartDist;
 
         sprite.material.blending = THREE.AdditiveBlending;
 
